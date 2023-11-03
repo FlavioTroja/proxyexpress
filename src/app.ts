@@ -19,7 +19,21 @@ app.post('/proxy', async (req, res) => {
   try {
     const body = req.body;
 
+    const now = new Date().toLocaleTimeString('it-it', { year:"numeric", month:"short", day:"numeric", hour:"numeric", minute:"numeric", second: "numeric"});
+    
+    console.log(`[${now}] ${body.remoteMethod?.toUpperCase()} ${body.remoteUrl?.toLowerCase()}`);
+    console.log(`> Request Heraders`);
+    console.log(`    Accept: "application/xml"`);
+    console.log(`    Content-Type: "application/xml"`);
+
+    // Basic Authentication
     const credentials = body.remoteUsername && Buffer.from(`${body.remoteUsername}:${body.remotePassword}`).toString('base64');
+
+    credentials && console.log(`    Authorization": "Basic ${credentials}"`);
+
+    console.log(`> Request Body`);
+    console.log(`    ${body.remoteBody}`);
+
     // Esegui la richiesta al server SOAP esterno
     const response = await axios({
       method: body.remoteMethod,
@@ -35,6 +49,7 @@ app.post('/proxy', async (req, res) => {
     // Imposta l'intestazione della risposta come XML
     res.set('Content-Type', 'application/xml');
     // Invia il documento XML come risposta
+    console.log("---");
     res.send(response.data);
   } catch (error) {
     console.error('Errore proxy:', error);
