@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  proxyservice:
+    image: proxyexpress/server
+    container_name: proxyexpress
+    restart: always
+    ports:
+      - "5001:5000"
+    build:
+      context: .
